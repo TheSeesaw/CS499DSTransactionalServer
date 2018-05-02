@@ -2,6 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/Krasis/Documents/NetBeansProjects/TransactionalServer/src/transactionalserver/TransactionalServer.java</file>
+            <file>file:/C:/Users/Krasis/Documents/NetBeansProjects/TransactionalServer/src/transactionalserver/TransactionServerProxy.java</file>
+            <file>file:/C:/Users/Krasis/Documents/NetBeansProjects/TransactionalServer/src/transactionalserver/LockManager.java</file>
+            <file>file:/C:/Users/Krasis/Documents/NetBeansProjects/TransactionalServer/src/transactionalserver/TransactionalClient.java</file>
+            <file>file:/C:/Users/Krasis/Documents/NetBeansProjects/TransactionalServer/src/transactionalserver/Lock.java</file>
+        </group>
     </open-files>
 </project-private>

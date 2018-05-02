@@ -19,12 +19,14 @@ public class TransactionalClient
     static int numAccounts;
     static int numTransactions;
     static int serverPort;
+    static String serverHost;
     static ArrayList<TransactionServerProxy> proxies;
     static Random rGen;
     
-    public TransactionalClient(int aPort, int accounts, int transactions)
+    public TransactionalClient(int aPort, String aHost, int accounts, int transactions)
     {
         TransactionalClient.serverPort = aPort;
+        TransactionalClient.serverHost = aHost;
         TransactionalClient.numAccounts = accounts;
         TransactionalClient.numTransactions = transactions;
         TransactionalClient.proxies = new ArrayList<TransactionServerProxy>(TransactionalClient.numTransactions);
@@ -44,28 +46,45 @@ public class TransactionalClient
     private class TransactionServerProxyThread extends Thread
     {
         int id;
+        int fromAccount;
+        int toAccount;
         int initialBalance;
         int endBalance;
-        int tempValue;
-        int randValue;
+        int transferAmount;
         TransactionServerProxy proxy;
         
         private TransactionServerProxyThread(int transactionID)
         {
             this.id = transactionID;
+            this.fromAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts) + 1;
+            this.toAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts) + 1;
+            while (this.toAccount == this.fromAccount) {
+                // generate a new toAccount number until they don't match
+                this.toAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts) + 1;
+            }
             // create a proxy to work through and add it to known proxies
-            this.proxy = new TransactionServerProxy(this.id, TransactionalClient.serverPort);
+            this.proxy = new TransactionServerProxy(TransactionalClient.serverPort, TransactionalClient.serverHost);
             TransactionalClient.proxies.add(this.proxy);
+        }
+        
+        public void run()
+        {
             // open a connection to the server
             this.proxy.openConnection();
             // read account value from the server
-            initialBalance = (Integer)this.proxy.read();
+            this.initialBalance = (Integer)this.proxy.read(this.fromAccount);
             // modify account by random value between 1 and 10
-            randValue = TransactionalClient.rGen.nextInt(10) + 1;
-            tempValue = initialBalance - randValue;
+            this.transferAmount = TransactionalClient.rGen.nextInt(10) + 1;
+            this.endBalance = initialBalance - transferAmount;
             // write account value back to the server
-            this.proxy.write(tempValue);
-            // close the connection
+            this.proxy.write(fromAccount, endBalance);
+            // withdrawal finished, start deposit to second account
+            // read second account value
+            this.initialBalance = (Integer)this.proxy.read(this.toAccount);
+            // deposit transfer amount
+            this.endBalance = this.initialBalance + this.transferAmount;
+            this.proxy.write(toAccount, endBalance);
+            // transaction complete, close the connection
             this.proxy.closeConnection();
         }
     }
@@ -75,11 +94,12 @@ public class TransactionalClient
         // get number of accounts and transactions from the command line
         // NOTE: hardcoded for now
         int serverPort = 8080; // Integer.parseInt(args[0]);
-        int accParam = 10; //Integer.parseInt(args[1]);
-        int transParam = 10; //Integer.parseInt(args[0]);
+        String serverHost = "localhost"; // args[1];
+        int accParam = 10; //Integer.parseInt(args[2]);
+        int transParam = 10; //Integer.parseInt(args[3]);
         
         // create a new client
-        TransactionalClient client = new TransactionalClient(serverPort, accParam, transParam);
+        TransactionalClient client = new TransactionalClient(serverPort, serverHost, accParam, transParam);
         client.run();
     }
 }

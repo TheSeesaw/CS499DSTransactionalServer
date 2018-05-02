@@ -11,22 +11,25 @@ import java.net.*;
  *
  * @author Krasis
  */
-public class TransactionalServer 
+public class TransactionalServer implements MessageTypes
 {
-    ServerSocket socket = null;
+    public static int serverPort;
+    public static ServerSocket socket = null;
+    public static Transaction transactions = null;
     
     
-    public TransactionalServer()
+    public TransactionalServer(int serverPort)
     {
+        this.serverPort = serverPort;
         // create a socket for the server
         try
         {
             System.out.println("Starting server . . .");
-            this.socket = new ServerSocket(8080);
+            TransactionalServer.socket = new ServerSocket(TransactionalServer.serverPort);
         }
         catch (IOException e)
         {
-            System.out.println("Unable to start server listening on port: 8080");
+            System.out.println("Unable to start server listening on port: " + Integer.toString(TransactionalServer.serverPort));
             e.printStackTrace();
             System.exit(-1);
         }
@@ -36,10 +39,10 @@ public class TransactionalServer
     public void run()
     {
         while (true) {
-            System.out.println("[TransactionServer.run] Waiting for connections on Port #8080");
+            System.out.println("[TransactionServer.run] Waiting for connections on Port " + Integer.toString(TransactionalServer.serverPort));
             try 
             {
-                TransactionWorkerThread wThread = new TransactionWorkerThread(this.socket.accept());
+                TransactionWorkerThread wThread = new TransactionWorkerThread(TransactionalServer.socket.accept());
                 System.out.println("[TransactionServer.run] A connection to a client is established!");
                 wThread.start();
             } catch (Exception ex) {
@@ -51,9 +54,9 @@ public class TransactionalServer
     private class TransactionWorkerThread extends Thread
     {
         Socket client = null;
-        ObjectInputStream readFromNet = null;
-        ObjectOutputStream writeToNet = null;
-        //Message message = null;
+        ObjectInputStream fromClient = null;
+        ObjectOutputStream toClient = null;
+        Message message = null;
         
         private TransactionWorkerThread(Socket client) 
         {
@@ -62,7 +65,29 @@ public class TransactionalServer
         
         public void run()
         {
+            // create reader and writer for client, then take message
+            try {
+                this.toClient = new ObjectOutputStream(this.client.getOutputStream());
+                this.fromClient = new ObjectInputStream(this.client.getInputStream());
+                // read message
+                this.message = (Message)fromClient.readObject();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             
+            // handle message based on type
+            switch (message.getType()) {
+                case OPEN_TRANSACTION:
+                    break;
+                case CLOSE_TRANSACTION:
+                    break;
+                case READ_REQUEST:
+                    break;
+                case WRITE_REQUEST:
+                    break;
+                default:
+                    System.err.println("[TransactionWorkerThread.run] Warning: Message type not implemented");
+            }            
         }
     }
     /**
@@ -71,7 +96,8 @@ public class TransactionalServer
     public static void main(String[] args) 
     {
         // create a new server object
-        TransactionalServer server = new TransactionalServer();
+        int serverPort = 8080; // Integer.parseInt(args[0]);
+        TransactionalServer server = new TransactionalServer(serverPort);
         server.run();
     }
     

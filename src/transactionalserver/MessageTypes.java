@@ -5,12 +5,15 @@
  */
 package transactionalserver;
 
-import java.util.ArrayList;
 /**
  *
  * @author Krasis
  */
-public class AccountManager {
-    ArrayList<Account> accounts;
+public interface MessageTypes {
     
+    public static int OPEN_TRANSACTION = 1;
+    public static int CLOSE_TRANSACTION = 2;
+    
+    public static int READ_REQUEST = 3;
+    public static int WRITE_REQUEST = 4;
 }
