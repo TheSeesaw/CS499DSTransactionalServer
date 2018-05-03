@@ -166,9 +166,9 @@ public class TransactionalServer implements MessageTypes
     public static void main(String[] args) 
     {
         // create a new server object
-        int serverPort = 8080; // Integer.parseInt(args[0]);
-        int accParam = 10; //Integer.parseInt(args[1]);
-        int transParam = 10; //Integer.parseInt(args[2]);
+        int serverPort = Integer.parseInt(args[0]);
+        int accParam = Integer.parseInt(args[1]);
+        int transParam = Integer.parseInt(args[2]);
         TransactionalServer server = new TransactionalServer(serverPort, accParam, transParam, true);
         server.run();
     }

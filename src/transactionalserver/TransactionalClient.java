@@ -93,10 +93,10 @@ public class TransactionalClient
     {
         // get number of accounts and transactions from the command line
         // NOTE: hardcoded for now
-        int serverPort = 8080; // Integer.parseInt(args[0]);
-        String serverHost = "localhost"; // args[1];
-        int accParam = 10; //Integer.parseInt(args[2]);
-        int transParam = 10; //Integer.parseInt(args[3]);
+        int serverPort = Integer.parseInt(args[0]);
+        String serverHost = args[1];
+        int accParam = Integer.parseInt(args[2]);
+        int transParam = Integer.parseInt(args[3]);
         
         // create a new client
         TransactionalClient client = new TransactionalClient(serverPort, serverHost, accParam, transParam);
