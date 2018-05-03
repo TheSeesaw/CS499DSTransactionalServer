@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author Krasis
  */
-public class AccountManager {
+public class AccountManager implements LockTypes {
     ArrayList<Account> accounts;
     
     public AccountManager(int numAccounts) {
@@ -24,15 +24,22 @@ public class AccountManager {
         return this.accounts.get(accountID);
     }
     
-    public int getAccountBalance(int accountID) {
-        // TODO: get read lock
+    public int getAccountBalance(int accountID, LockManager lockManager, Transaction lockingTransaction, boolean enableLocking) {
         Account account = getAccount(accountID);
+        if (enableLocking) {
+            // get a read lock
+            // NOTE: I don't know why this causes an error, or how to fix it
+            lockManager.setLock(account, lockingTransaction, READ_LOCK);
+        }
         return account.getBalance();
     }
     
-    public void setAccountBalance(int accountID, int amount) {
-        // TODO get write lock
+    public void setAccountBalance(int accountID, int amount, LockManager lockManager, Transaction lockingTransaction, boolean enableLocking) {
         Account account = getAccount(accountID);
+        if (enableLocking) {
+            // get write lock
+            lockManager.setLock(account, lockingTransaction, WRITE_LOCK);
+        }
         account.setBalance(amount);
     }
 }

@@ -133,7 +133,7 @@ public class TransactionalServer implements MessageTypes
                         
                     case READ_REQUEST:
                         // read the target account balance
-                        int readResult = TransactionalServer.accManager.getAccountBalance((Integer)message.getContent());
+                        int readResult = TransactionalServer.accManager.getAccountBalance((Integer)message.getContent(), TransactionalServer.lockManager, this.transaction, TransactionalServer.useLocking);
                         System.out.println("[TransactionWorkerThread.run] reading balance from account: " + (Integer)message.getContent());
                         response = new Message(READ_REQUEST, readResult);
                         // write the balance back to the client
@@ -151,7 +151,7 @@ public class TransactionalServer implements MessageTypes
                         int newBalance = (Integer)writeData[1];
                         System.out.println("[TransactionWorkerThread.run] writing balance: " + newBalance + " to account: " + targetAcc);
                         // write the balance to the target account
-                        TransactionalServer.accManager.setAccountBalance(targetAcc, newBalance);
+                        TransactionalServer.accManager.setAccountBalance(targetAcc, newBalance, TransactionalServer.lockManager, this.transaction, TransactionalServer.useLocking);
                         break;
                         
                     default:
