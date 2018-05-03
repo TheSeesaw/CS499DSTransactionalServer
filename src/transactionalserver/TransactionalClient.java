@@ -37,7 +37,7 @@ public class TransactionalClient
     {
         int transactionIndex = 0;
         for (; transactionIndex < TransactionalClient.numTransactions; transactionIndex++)
-        {            
+        {
             TransactionServerProxyThread pThread = new TransactionServerProxyThread(transactionIndex);
             pThread.start();
         }
@@ -56,11 +56,11 @@ public class TransactionalClient
         private TransactionServerProxyThread(int transactionID)
         {
             this.id = transactionID;
-            this.fromAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts) + 1;
-            this.toAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts) + 1;
+            this.fromAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts);
+            this.toAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts);
             while (this.toAccount == this.fromAccount) {
                 // generate a new toAccount number until they don't match
-                this.toAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts) + 1;
+                this.toAccount = TransactionalClient.rGen.nextInt(TransactionalClient.numAccounts);
             }
             // create a proxy to work through and add it to known proxies
             this.proxy = new TransactionServerProxy(TransactionalClient.serverPort, TransactionalClient.serverHost);

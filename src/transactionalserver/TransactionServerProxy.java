@@ -40,6 +40,7 @@ public class TransactionServerProxy implements MessageTypes
             // read back transaction ID
             Message openConfirm = (Message)this.fromServer.readObject();
             this.id = (Integer)openConfirm.getContent();
+            System.out.println("[TransactionServerProxy.openConnection] New transaction created with id: " + this.id);
         }
         catch (Exception e)
         {
@@ -60,6 +61,7 @@ public class TransactionServerProxy implements MessageTypes
         {
             e.printStackTrace();
         }
+        System.out.println("[TransactionServerProxy.openConnection] Transaction with id: " + this.id + " closed.");
     }
     
     public void write(int targetAccount, int parameter)
@@ -80,17 +82,17 @@ public class TransactionServerProxy implements MessageTypes
     
     public Object read(int targetAccount)
     {
-        Object received = null;
         Message msg = new Message(READ_REQUEST, targetAccount);
+        Message received = null;
         try
         {
             this.toServer.writeObject(msg);
-            received = this.fromServer.readObject();
+            received = (Message)this.fromServer.readObject();
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        return received;
+        return received.getContent();
     }
 }

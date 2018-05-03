@@ -9,12 +9,8 @@ package transactionalserver;
  *
  * @author Krasis
  */
-public class Transaction 
-{
-    int id;
-    String log;
-    public Transaction(int id) {
-        this.id = id;
-        this.log = "";
-    }
+public interface LockTypes {
+    public static int READ_LOCK = 0;
+    public static int WRITE_LOCK = 1;
+    
 }

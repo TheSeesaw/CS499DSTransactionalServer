@@ -13,4 +13,26 @@ import java.util.ArrayList;
 public class AccountManager {
     ArrayList<Account> accounts;
     
+    public AccountManager(int numAccounts) {
+        this.accounts = new ArrayList<>(numAccounts);
+        for (; numAccounts > 0; numAccounts--) {
+            this.accounts.add(new Account(10));
+        }
+    }
+    
+    public Account getAccount(int accountID) {
+        return this.accounts.get(accountID);
+    }
+    
+    public int getAccountBalance(int accountID) {
+        // TODO: get read lock
+        Account account = getAccount(accountID);
+        return account.getBalance();
+    }
+    
+    public void setAccountBalance(int accountID, int amount) {
+        // TODO get write lock
+        Account account = getAccount(accountID);
+        account.setBalance(amount);
+    }
 }
